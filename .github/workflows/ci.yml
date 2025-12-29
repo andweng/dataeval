@@ -34,6 +34,9 @@ jobs:
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
 
       - name: Install dependencies
         run: uv pip install nox nox-uv --system
@@ -64,8 +67,8 @@ jobs:
       - name: Run lint
         run: nox -e lint
 
-  minimum-install:
-    name: Minimum Install (Python ${{ matrix.python-version }})
+  minimum-dependencies:
+    name: Minimum Dependencies (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -84,6 +87,14 @@ jobs:
         with:
           enable-cache: true
           cache-dependency-glob: "uv.lock"
+
+      - name: Cache compiled wheels
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/uv
+          key: wheels-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('uv.lock') }}
+          restore-keys: |
+            wheels-${{ runner.os }}-py${{ matrix.python-version }}-
 
       - name: Install dependencies
         run: uv pip install nox nox-uv --system
