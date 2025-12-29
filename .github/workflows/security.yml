@@ -1,9 +1,8 @@
 name: Security
 
 on:
+  push:
   pull_request:
-    branches:
-      - main
   workflow_dispatch:
 
 # Cancel in-progress runs when a new workflow is triggered
